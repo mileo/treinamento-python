@@ -42,17 +42,25 @@ import re
 import string
 
 
-def contar_palavras(arquivo):
+def ler_arquivo(arquivo):
     f = open(arquivo, 'rU')
-    conteudo_arquivo = f.read()
+    while True:
+        linha = f.next()
+        if not linha:
+            break
+        yield linha
+    f.close()
+
+def contar_palavras(arquivo):
     contador_palavra = {}
-    for palavra in conteudo_arquivo.split():
-        palavra = palavra.lower()
-        palavra = re.sub('[%s]' % re.escape(string.punctuation), '', palavra or '')
-        if contador_palavra.get(palavra):
-            contador_palavra[palavra] += 1
-        else:
-            contador_palavra[palavra] = 1
+    for linha in ler_arquivo(arquivo):
+        linha = re.sub('[%s]' % re.escape(string.punctuation), '', linha or '')
+        for palavra in linha.split():
+            palavra = palavra.lower()
+            if contador_palavra.get(palavra):
+                contador_palavra[palavra] += 1
+            else:
+                contador_palavra[palavra] = 1
     return contador_palavra
 
 def print_words(arquivo):
